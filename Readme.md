@@ -1,7 +1,7 @@
 # Личный проект «Кексобукинг» [![Build status][travis-image]][travis-url]
 
 * Студент: [Роман Капитонов](https://up.htmlacademy.ru/javascript/20/user/1248115).
-* Наставник: `Неизвестно`.
+* Наставник: [Виталий Комолаев](https://htmlacademy.ru/profile/id1274335).
 
 ---
 
