@@ -51,6 +51,8 @@ function getAnnouncements() {
   for (var i = 0; i < NUMBER_ANNOUNCEMENTS; i++) {
     var locationX = randomInteger(LOCATION_X[0], LOCATION_X[1]);
     var locationY = randomInteger(LOCATION_Y[0], LOCATION_Y[1]);
+    var featuresLength = randomIndex(FEATURES) + 1;
+    var photosLength = randomIndex(PHOTOS) + 1;
     announcements.push({
       'author': {
         'avatar': 'img/avatars/user0' + (i + 1) + '.png'
@@ -64,9 +66,9 @@ function getAnnouncements() {
         'guests': GUESTS[randomIndex(GUESTS)],
         'checkin': CHECK_TIME[randomIndex(CHECK_TIME)],
         'checkout': CHECK_TIME[randomIndex(CHECK_TIME)],
-        'features': FEATURES.length = randomIndex(FEATURES) + 1,
+        'features': FEATURES.slice(0, featuresLength),
         'description': DESCRIPTION[randomIndex(DESCRIPTION)],
-        'photos': PHOTOS.length = randomIndex(PHOTOS) + 1
+        'photos': PHOTOS.slice(0, photosLength)
       },
       'location': {
         'x': locationX,
