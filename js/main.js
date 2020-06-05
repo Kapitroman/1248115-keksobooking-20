@@ -109,3 +109,67 @@ function renderListOfPins() {
 }
 
 renderListOfPins();
+
+var templateCard = document.querySelector('#card')
+  .content
+  .querySelector('.map__card');
+
+var cardElement = templateCard.cloneNode(true);
+
+var popupTitle = cardElement.querySelector('.popup__title');
+popupTitle.textContent = messages[0].offer.title;
+
+var popupTextAddress = cardElement.querySelector('.popup__text--address');
+popupTextAddress.textContent = messages[0].offer.address;
+
+var popupTextPrice = cardElement.querySelector('.popup__text--price');
+popupTextPrice.textContent = messages[0].offer.price + '₽/ночь';
+
+var popupType = cardElement.querySelector('.popup__type');
+switch (messages[0].offer.type) {
+  case 'flat':
+    popupType.textContent = 'Квартира';
+    break;
+  case 'bungalo':
+    popupType.textContent = 'Бунгало';
+    break;
+  case 'house':
+    popupType.textContent = 'Дом';
+    break;
+  case 'palace':
+    popupType.textContent = 'Дворец';
+    break;
+}
+
+var popupTextCapacity = cardElement.querySelector('.popup__text--capacity');
+popupTextCapacity.textContent = messages[0].offer.rooms + ' комнаты для ' + messages[0].offer.guests + ' гостей';
+
+var popupTextTime = cardElement.querySelector('.popup__text--time');
+popupTextTime.textContent = 'Заезд после ' + messages[0].offer.checkin + ' выезд до ' + messages[0].offer.checkout;
+
+var featuresList = cardElement.querySelectorAll('.popup__feature');
+for (var j = 0; j < featuresList.length; j++) {
+  if (messages[0].offer.features[j]) {
+    featuresList[j].textContent = messages[0].offer.features[j];
+  } else {
+    featuresList[j].style = 'display: none;';
+  }
+}
+
+var popupDescription = cardElement.querySelector('.popup__description');
+popupDescription.textContent = messages[0].offer.description;
+
+var popupPhotos = cardElement.querySelector('.popup__photos');
+var popupPhoto = cardElement.querySelector('.popup__photo');
+for (var k = 0; k < messages[0].offer.photos.length; k++) {
+  var tempPhoto = popupPhoto.cloneNode(true);
+  tempPhoto.src = messages[0].offer.photos[k];
+  popupPhotos.insertBefore(tempPhoto, popupPhoto);
+}
+popupPhotos.removeChild(popupPhoto);
+
+var popupAvatar = cardElement.querySelector('.popup__avatar');
+popupAvatar.src = messages[0].author.avatar;
+
+var mapFiltersContainer = document.querySelector('.map__filters-container');
+map.insertBefore(cardElement, mapFiltersContainer);
