@@ -34,8 +34,8 @@ var DESCRIPTION = [
 var PHOTOS = ['http://o0.github.io/assets/images/tokyo/hotel1.jpg', 'http://o0.github.io/assets/images/tokyo/hotel2.jpg', 'http://o0.github.io/assets/images/tokyo/hotel3.jpg'];
 var LOCATION_X = [100, 1040];
 var LOCATION_Y = [130, 630];
-var SIZES_PIN_START = [65, 33];
-var SIZES_PIN = [65, 87];
+var SIZES_PIN_START = [62, 31];
+var SIZES_PIN = [62, 84];
 /*
 var TYPE_FLAT = {
   'flat': 'Квартира',
@@ -109,12 +109,14 @@ var formAdForm = document.querySelector('.ad-form');
 var formSelects = document.querySelectorAll('select');
 var formFieldsets = document.querySelectorAll('fieldset');
 
-for (var i = 0; i < formSelects.length; i++) {
-  formSelects[i].setAttribute('disabled', '');
+function setDisabled(elem) {
+  for (var i = 0; i < elem.length; i++) {
+    elem[i].setAttribute('disabled', '');
+  }
 }
-for (var j = 0; j < formFieldsets.length; j++) {
-  formFieldsets[j].setAttribute('disabled', '');
-}
+
+setDisabled(formSelects);
+setDisabled(formFieldsets);
 
 var inputAddress = formAdForm.querySelector('input[name="address"]');
 var selectRooms = formAdForm.querySelector('select[name="rooms"]');
@@ -140,15 +142,18 @@ mapPinMain.addEventListener('keydown', function (evt) {
   }
 });
 
+function removeDisabled(elem) {
+  for (var k = 0; k < elem.length; k++) {
+    elem[k].removeAttribute('disabled');
+  }
+}
+
 function getActivation() {
   map.classList.remove('map--faded');
+  formAdForm.classList.remove('ad-form--disabled');
   renderListOfPins();
-  for (var k = 0; k < formSelects.length; k++) {
-    formSelects[k].removeAttribute('disabled');
-  }
-  for (var m = 0; m < formFieldsets.length; m++) {
-    formFieldsets[m].removeAttribute('disabled');
-  }
+  removeDisabled(formSelects);
+  removeDisabled(formFieldsets);
   inputAddress.value = getAddressForm(mapPinMain, SIZES_PIN);
   for (var n = 0; n < selectCapacity.options.length; n++) {
     if (selectCapacity.options[n].value === '1') {
