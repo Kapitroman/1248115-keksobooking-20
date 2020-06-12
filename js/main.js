@@ -34,12 +34,27 @@ var DESCRIPTION = [
 var PHOTOS = ['http://o0.github.io/assets/images/tokyo/hotel1.jpg', 'http://o0.github.io/assets/images/tokyo/hotel2.jpg', 'http://o0.github.io/assets/images/tokyo/hotel3.jpg'];
 var LOCATION_X = [100, 1040];
 var LOCATION_Y = [130, 630];
-var SIZES_PIN = [50, 70];
+var SIZES_PIN_START = [62, 31];
+var SIZES_PIN = [62, 84];
+/*
 var TYPE_FLAT = {
   'flat': 'Квартира',
   'bungalo': 'Бунгало',
   'palace': 'Дом',
   'house': 'Дворец'
+};
+*/
+var ROOMS_DISABLED_GUEST = {
+  '1': ['1'],
+  '2': ['1', '2'],
+  '3': ['1', '2', '3'],
+  '100': ['0']
+};
+var MESSAGE_CAPACITY = {
+  '1': 'Вы можете выбрать для 1 гостя',
+  '2': 'Вы можете выбрать для 1 гостя или для 2 гостей',
+  '3': 'Вы можете выбрать для 1 гостя, для 2 или 3 гостей',
+  '100': 'Вы можете выбрать только нет гостей'
 };
 
 function randomIndex(arr) {
@@ -88,7 +103,89 @@ function getAnnouncements() {
 var messages = getAnnouncements();
 
 var map = document.querySelector('.map');
-map.classList.remove('map--faded');
+var mapPinMain = map.querySelector('.map__pin--main');
+var mapPins = document.querySelector('.map__pins');
+var formAdForm = document.querySelector('.ad-form');
+var formSelects = document.querySelectorAll('select');
+var formFieldsets = document.querySelectorAll('fieldset');
+
+function setDisabled(elem) {
+  for (var i = 0; i < elem.length; i++) {
+    elem[i].setAttribute('disabled', '');
+  }
+}
+
+setDisabled(formSelects);
+setDisabled(formFieldsets);
+
+var inputAddress = formAdForm.querySelector('input[name="address"]');
+var selectRooms = formAdForm.querySelector('select[name="rooms"]');
+var selectCapacity = formAdForm.querySelector('select[name="capacity"]');
+
+function getAddressForm(elem, pin) {
+  var xElem = elem.style.left;
+  var yElem = elem.style.top;
+  return Math.round(parseInt(xElem, 10) + pin[0] / 2) + ', ' + Math.round(parseInt(yElem, 10) + pin[1]);
+}
+
+inputAddress.value = getAddressForm(mapPinMain, SIZES_PIN_START);
+
+mapPinMain.addEventListener('mousedown', function (evt) {
+  if (evt.button === 0) {
+    getActivation();
+  }
+});
+
+mapPinMain.addEventListener('keydown', function (evt) {
+  if (evt.key === 'Enter') {
+    getActivation();
+  }
+});
+
+function removeDisabled(elem) {
+  for (var k = 0; k < elem.length; k++) {
+    elem[k].removeAttribute('disabled');
+  }
+}
+
+function getActivation() {
+  map.classList.remove('map--faded');
+  formAdForm.classList.remove('ad-form--disabled');
+  renderListOfPins();
+  removeDisabled(formSelects);
+  removeDisabled(formFieldsets);
+  inputAddress.value = getAddressForm(mapPinMain, SIZES_PIN);
+  for (var n = 0; n < selectCapacity.options.length; n++) {
+    if (selectCapacity.options[n].value === '1') {
+      selectCapacity.options[n].selected = true;
+    } else {
+      selectCapacity.options[n].disabled = true;
+    }
+  }
+}
+
+function getMessageCapacity() {
+  if (ROOMS_DISABLED_GUEST[selectRooms.value].includes(selectCapacity.value)) {
+    selectCapacity.setCustomValidity('');
+  } else {
+    selectCapacity.setCustomValidity(MESSAGE_CAPACITY[selectRooms.value]);
+  }
+}
+
+selectRooms.addEventListener('change', function () {
+  for (var p = 0; p < selectCapacity.options.length; p++) {
+    if (ROOMS_DISABLED_GUEST[selectRooms.value].includes(selectCapacity.options[p].value)) {
+      selectCapacity[p].disabled = false;
+    } else {
+      selectCapacity[p].disabled = true;
+    }
+  }
+  getMessageCapacity();
+});
+
+selectCapacity.addEventListener('change', function () {
+  getMessageCapacity();
+});
 
 var templatePin = document.querySelector('#pin')
   .content
@@ -104,18 +201,15 @@ function renderPin(message) {
   return pinElement;
 }
 
-var mapPins = document.querySelector('.map__pins');
-
 function renderListOfPins() {
   var fragment = document.createDocumentFragment();
-  for (var i = 0; i < messages.length; i++) {
-    fragment.appendChild(renderPin(messages[i]));
+  for (var r = 0; r < messages.length; r++) {
+    fragment.appendChild(renderPin(messages[r]));
   }
   mapPins.appendChild(fragment);
 }
 
-renderListOfPins();
-
+/*
 var templateCard = document.querySelector('#card')
   .content
   .querySelector('.map__card');
@@ -191,3 +285,4 @@ function createCard(message) {
 }
 
 createCard(messages[0]);
+*/
