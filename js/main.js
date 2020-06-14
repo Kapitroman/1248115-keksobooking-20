@@ -263,7 +263,7 @@ function closeCardMessage() {
 function openCardMessage(evt) {
   var targetPin = evt.target.closest('.map__pin');
   if (!targetPin) {
-    return ;
+    return;
   }
   if (targetPin.classList.contains('map__pin--main')) {
     return;
