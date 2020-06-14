@@ -36,14 +36,13 @@ var LOCATION_X = [100, 1040];
 var LOCATION_Y = [130, 630];
 var SIZES_PIN_START = [62, 31];
 var SIZES_PIN = [62, 84];
-/*
+var SIZES_PIN_MESSAGE = [50, 70];
 var TYPE_FLAT = {
-  'flat': 'Квартира',
-  'bungalo': 'Бунгало',
-  'palace': 'Дом',
-  'house': 'Дворец'
+  'flat': ['Квартира', 1000],
+  'bungalo': ['Бунгало', 0],
+  'palace': ['Дворец', 10000],
+  'house': ['Дом', 5000]
 };
-*/
 var ROOMS_DISABLED_GUEST = {
   '1': ['1'],
   '2': ['1', '2'],
@@ -105,6 +104,7 @@ var messages = getAnnouncements();
 var map = document.querySelector('.map');
 var mapPinMain = map.querySelector('.map__pin--main');
 var mapPins = document.querySelector('.map__pins');
+var mapFiltersContainer = document.querySelector('.map__filters-container');
 var formAdForm = document.querySelector('.ad-form');
 var formSelects = document.querySelectorAll('select');
 var formFieldsets = document.querySelectorAll('fieldset');
@@ -119,8 +119,12 @@ setDisabled(formSelects);
 setDisabled(formFieldsets);
 
 var inputAddress = formAdForm.querySelector('input[name="address"]');
+var selectFlatType = formAdForm.querySelector('select[name="type"]');
+var inputPrice = formAdForm.querySelector('input[name="price"]');
 var selectRooms = formAdForm.querySelector('select[name="rooms"]');
 var selectCapacity = formAdForm.querySelector('select[name="capacity"]');
+var selectTimeIn = formAdForm.querySelector('select[name="timein"]');
+var selectTimeOut = formAdForm.querySelector('select[name="timeout"]');
 
 function getAddressForm(elem, pin) {
   var xElem = elem.style.left;
@@ -131,13 +135,13 @@ function getAddressForm(elem, pin) {
 inputAddress.value = getAddressForm(mapPinMain, SIZES_PIN_START);
 
 mapPinMain.addEventListener('mousedown', function (evt) {
-  if (evt.button === 0) {
+  if (evt.button === 0 && map.classList.contains('map--faded')) {
     getActivation();
   }
 });
 
 mapPinMain.addEventListener('keydown', function (evt) {
-  if (evt.key === 'Enter') {
+  if (evt.key === 'Enter' && map.classList.contains('map--faded')) {
     getActivation();
   }
 });
@@ -162,7 +166,30 @@ function getActivation() {
       selectCapacity.options[n].disabled = true;
     }
   }
+  getPrice();
 }
+
+function getPrice() {
+  inputPrice.min = TYPE_FLAT[selectFlatType.value][1];
+  inputPrice.placeholder = TYPE_FLAT[selectFlatType.value][1];
+}
+
+function getMessagePrice() {
+  if (inputPrice.value < inputPrice.min) {
+    inputPrice.setCustomValidity('для данного типа жилья \nминимальная цена должна быть выше');
+  } else {
+    inputPrice.setCustomValidity('');
+  }
+}
+
+selectFlatType.addEventListener('change', function () {
+  getPrice();
+  getMessagePrice();
+});
+
+inputPrice.addEventListener('change', function () {
+  getMessagePrice();
+});
 
 function getMessageCapacity() {
   if (ROOMS_DISABLED_GUEST[selectRooms.value].includes(selectCapacity.value)) {
@@ -187,13 +214,21 @@ selectCapacity.addEventListener('change', function () {
   getMessageCapacity();
 });
 
+selectTimeIn.addEventListener('change', function () {
+  selectTimeOut.value = selectTimeIn.value;
+});
+
+selectTimeOut.addEventListener('change', function () {
+  selectTimeIn.value = selectTimeOut.value;
+});
+
 var templatePin = document.querySelector('#pin')
   .content
   .querySelector('.map__pin');
 
 function renderPin(message) {
   var pinElement = templatePin.cloneNode(true);
-  pinElement.style = 'left: ' + (message.location.x - SIZES_PIN[0] / 2) + 'px; top: ' + (message.location.y - SIZES_PIN[1]) + 'px;';
+  pinElement.style = 'left: ' + (message.location.x - SIZES_PIN_MESSAGE[0] / 2) + 'px; top: ' + (message.location.y - SIZES_PIN_MESSAGE[1]) + 'px;';
   var imgPinElement = pinElement.querySelector('img');
   imgPinElement.src = message.author.avatar;
   imgPinElement.alt = message.offer.title;
@@ -209,7 +244,48 @@ function renderListOfPins() {
   mapPins.appendChild(fragment);
 }
 
-/*
+function handlerClickClose() {
+  closeCardMessage();
+}
+
+function handlerPressEsc(evt) {
+  if (evt.key === 'Escape') {
+    evt.preventDefault();
+    closeCardMessage();
+  }
+}
+
+function closeCardMessage() {
+  map.removeChild(map.querySelector('.popup'));
+  document.removeEventListener('keydown', handlerPressEsc);
+}
+
+function openCardMessage(evt) {
+  var targetPin = evt.target.closest('.map__pin');
+  if (!targetPin) {
+    return;
+  }
+  if (targetPin.classList.contains('map__pin--main')) {
+    return;
+  }
+  var sourceImg = targetPin.firstElementChild.getAttribute('src');
+  if (mapFiltersContainer.previousElementSibling.classList.contains('popup')) {
+    map.removeChild(mapFiltersContainer.previousElementSibling);
+  }
+  for (var i = 0; i < messages.length; i++) {
+    if (sourceImg === messages[i].author.avatar) {
+      var openCard = createCard(messages[i]);
+      map.insertBefore(openCard, mapFiltersContainer);
+    }
+  }
+
+  var popupClose = openCard.querySelector('.popup__close');
+  popupClose.addEventListener('click', handlerClickClose);
+  document.addEventListener('keydown', handlerPressEsc);
+}
+
+mapPins.addEventListener('click', openCardMessage);
+
 var templateCard = document.querySelector('#card')
   .content
   .querySelector('.map__card');
@@ -248,7 +324,7 @@ function createCard(message) {
   getTextContent(popupTextPrice, message.offer.price + '₽/ночь');
 
   var popupType = cardElement.querySelector('.popup__type');
-  getTextContent(popupType, TYPE_FLAT[message.offer.type]);
+  getTextContent(popupType, TYPE_FLAT[message.offer.type][0]);
 
   var popupTextCapacity = cardElement.querySelector('.popup__text--capacity');
   getTextContent(popupTextCapacity, message.offer.rooms + ' ' + getRoomsString(message.offer.rooms) + ' для ' + message.offer.guests + ' ' + getGuestsString(message.offer.guests));
@@ -280,9 +356,5 @@ function createCard(message) {
   var popupAvatar = cardElement.querySelector('.popup__avatar');
   popupAvatar.src = message.author.avatar;
 
-  var mapFiltersContainer = document.querySelector('.map__filters-container');
-  map.insertBefore(cardElement, mapFiltersContainer);
+  return cardElement;
 }
-
-createCard(messages[0]);
-*/
