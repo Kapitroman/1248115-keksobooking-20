@@ -6,10 +6,6 @@
     .content
     .querySelector('.map__card');
 
-  function getTextContent(element, value) {
-    element.textContent = value;
-  }
-
   function getRoomsString(num) {
     if (num === 0 || num === 35) {
       return 'комнат';
@@ -31,34 +27,34 @@
     var cardElement = templateCard.cloneNode(true);
 
     var popupTitle = cardElement.querySelector('.popup__title');
-    getTextContent(popupTitle, message.offer.title);
+    window.utils.getTextContent(popupTitle, message.offer.title);
 
     var popupTextAddress = cardElement.querySelector('.popup__text--address');
-    getTextContent(popupTextAddress, message.offer.address);
+    window.utils.getTextContent(popupTextAddress, message.offer.address);
 
     var popupTextPrice = cardElement.querySelector('.popup__text--price');
-    getTextContent(popupTextPrice, message.offer.price + '₽/ночь');
+    window.utils.getTextContent(popupTextPrice, message.offer.price + '₽/ночь');
 
     var popupType = cardElement.querySelector('.popup__type');
-    getTextContent(popupType, window.dataProject.TYPE_FLAT[message.offer.type][0]);
+    window.utils.getTextContent(popupType, window.dataProject.TYPE_FLAT[message.offer.type][0]);
 
     var popupTextCapacity = cardElement.querySelector('.popup__text--capacity');
-    getTextContent(popupTextCapacity, message.offer.rooms + ' ' + getRoomsString(message.offer.rooms) + ' для ' + message.offer.guests + ' ' + getGuestsString(message.offer.guests));
+    window.utils.getTextContent(popupTextCapacity, message.offer.rooms + ' ' + getRoomsString(message.offer.rooms) + ' для ' + message.offer.guests + ' ' + getGuestsString(message.offer.guests));
 
     var popupTextTime = cardElement.querySelector('.popup__text--time');
-    getTextContent(popupTextTime, 'Заезд после ' + message.offer.checkin + ' выезд до ' + message.offer.checkout);
+    window.utils.getTextContent(popupTextTime, 'Заезд после ' + message.offer.checkin + ' выезд до ' + message.offer.checkout);
 
     var featuresList = cardElement.querySelectorAll('.popup__feature');
     for (var j = 0; j < featuresList.length; j++) {
       if (message.offer.features[j]) {
-        getTextContent(featuresList[j], message.offer.features[j]);
+        window.utils.getTextContent(featuresList[j], message.offer.features[j]);
       } else {
         featuresList[j].style = 'display: none;';
       }
     }
 
     var popupDescription = cardElement.querySelector('.popup__description');
-    getTextContent(popupDescription, message.offer.description);
+    window.utils.getTextContent(popupDescription, message.offer.description);
 
     var popupPhotos = cardElement.querySelector('.popup__photos');
     var popupPhoto = cardElement.querySelector('.popup__photo');

@@ -11,6 +11,19 @@
     getPrice: function () {
       window.dataProject.inputPrice.min = window.dataProject.TYPE_FLAT[window.dataProject.selectFlatType.value][1];
       window.dataProject.inputPrice.placeholder = window.dataProject.TYPE_FLAT[window.dataProject.selectFlatType.value][1];
+    },
+    setDisabled: function (elem) {
+      for (var i = 0; i < elem.length; i++) {
+        elem[i].setAttribute('disabled', '');
+      }
+    },
+    removeDisabled: function (elem) {
+      for (var k = 0; k < elem.length; k++) {
+        elem[k].removeAttribute('disabled');
+      }
+    },
+    getTextContent: function (element, value) {
+      element.textContent = value;
     }
   };
 
