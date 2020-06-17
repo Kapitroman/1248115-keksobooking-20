@@ -21,7 +21,8 @@
 
   mapPinMain.addEventListener('mousedown', function (evt) {
     evt.preventDefault();
-    if (evt.button === 0 && window.dataProject.map.classList.contains('map--faded')) {
+    var buttonMouse = evt.button;
+    if (buttonMouse === 0 && window.dataProject.map.classList.contains('map--faded')) {
       getActivation();
     }
 
@@ -32,6 +33,9 @@
 
     var onMouseMove = function (moveEvt) {
       moveEvt.preventDefault();
+      if (buttonMouse !== 0) {
+        return;
+      }
 
       var shift = {
         x: startCoords.x - moveEvt.clientX,
