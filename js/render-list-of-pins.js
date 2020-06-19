@@ -14,14 +14,15 @@
     var imgPinElement = pinElement.querySelector('img');
     imgPinElement.src = message.author.avatar;
     imgPinElement.alt = message.offer.title;
+    pinElement.allData = message;
 
     return pinElement;
   }
 
-  window.renderListOfPins = function () {
+  window.renderListOfPins = function (data) {
     var fragment = document.createDocumentFragment();
-    for (var r = 0; r < window.dataServer.length; r++) {
-      fragment.appendChild(renderPin(window.dataServer[r]));
+    for (var r = 0; r < data.length; r++) {
+      fragment.appendChild(renderPin(data[r]));
     }
     window.dataProject.mapPins.appendChild(fragment);
   };

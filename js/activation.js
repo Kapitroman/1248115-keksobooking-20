@@ -85,10 +85,24 @@
     }
   });
 
+  function successHandler(data) {
+    window.renderListOfPins(data);
+  }
+
+  function errorHandler(errorMessage) {
+    var templateError = document.querySelector('#error')
+      .content
+      .querySelector('.error');
+    var pinsError = templateError.cloneNode(true);
+    var pinsErrorMessage = pinsError.querySelector('.error__message');
+    window.utils.getTextContent(pinsErrorMessage, errorMessage);
+    window.dataProject.map.appendChild(pinsError);
+  }
+
   function getActivation() {
     window.dataProject.map.classList.remove('map--faded');
     window.dataProject.formAdForm.classList.remove('ad-form--disabled');
-    window.renderListOfPins();
+    window.loadData(successHandler, errorHandler);
     window.utils.removeDisabled(formSelects);
     window.utils.removeDisabled(formFieldsets);
     inputAddress.value = window.utils.getAddressForm(mapPinMain, SIZES_PIN);

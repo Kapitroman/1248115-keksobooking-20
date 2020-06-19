@@ -30,16 +30,13 @@
     if (targetPin.classList.contains('map__pin--main')) {
       return;
     }
-    var sourceImg = targetPin.firstElementChild.getAttribute('src');
+
     if (mapFiltersContainer.previousElementSibling.classList.contains('popup')) {
       window.dataProject.map.removeChild(mapFiltersContainer.previousElementSibling);
     }
-    for (var i = 0; i < window.dataServer.length; i++) {
-      if (sourceImg === window.dataServer[i].author.avatar) {
-        var openCard = window.createCard(window.dataServer[i]);
-        window.dataProject.map.insertBefore(openCard, mapFiltersContainer);
-      }
-    }
+
+    var openCard = window.createCard(targetPin.allData);
+    window.dataProject.map.insertBefore(openCard, mapFiltersContainer);
 
     var popupClose = openCard.querySelector('.popup__close');
     popupClose.addEventListener('click', handlerClickClose);
