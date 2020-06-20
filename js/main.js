@@ -13,6 +13,10 @@
   var formSelects = document.querySelectorAll('select');
   var formFieldsets = document.querySelectorAll('fieldset');
   var inputAddress = window.dataProject.formAdForm.querySelector('input[name="address"]');
+  var mapFiltersContainer = document.querySelector('.map__filters-container');
+  var startX = mapPinMain.style.left;
+  var startY = mapPinMain.style.top;
+
 
   window.utils.setDisabled(formSelects);
   window.utils.setDisabled(formFieldsets);
@@ -85,27 +89,65 @@
     }
   });
 
+  function handlerClickClose() {
+    closeCardMessage();
+  }
+
+  function handlerPressEsc(evt) {
+    if (evt.key === 'Escape') {
+      evt.preventDefault();
+      closeCardMessage();
+    }
+  }
+
+  function closeCardMessage() {
+    if (window.dataProject.map.querySelector('.popup')) {
+      window.dataProject.map.removeChild(window.dataProject.map.querySelector('.popup'));
+      document.removeEventListener('keydown', handlerPressEsc);
+    }
+  }
+
+  function openCardMessage(evt) {
+    var targetPin = evt.target.closest('.map__pin');
+    if (!targetPin) {
+      return;
+    }
+    if (targetPin.classList.contains('map__pin--main')) {
+      return;
+    }
+
+    closeCardMessage();
+
+    var openCard = window.createCard(targetPin.allData);
+    window.dataProject.map.insertBefore(openCard, mapFiltersContainer);
+
+    var popupClose = openCard.querySelector('.popup__close');
+    popupClose.addEventListener('click', handlerClickClose);
+    document.addEventListener('keydown', handlerPressEsc);
+  }
+
   function successHandler(data) {
     window.renderListOfPins(data);
   }
 
   function errorHandler(errorMessage) {
-    var templateError = document.querySelector('#error')
-      .content
-      .querySelector('.error');
-    var pinsError = templateError.cloneNode(true);
-    var pinsErrorMessage = pinsError.querySelector('.error__message');
-    window.utils.getTextContent(pinsErrorMessage, errorMessage);
-    window.dataProject.map.appendChild(pinsError);
+    window.addMessageForm();
+    window.utils.getTextContent(document.querySelector('.error__message'), errorMessage);
   }
 
   function getActivation() {
     window.dataProject.map.classList.remove('map--faded');
     window.dataProject.formAdForm.classList.remove('ad-form--disabled');
-    window.loadData(successHandler, errorHandler);
+
+    window.dataProject.mapPins.addEventListener('click', openCardMessage);
+
+    window.ajaxData(null, successHandler, errorHandler);
+
     window.utils.removeDisabled(formSelects);
     window.utils.removeDisabled(formFieldsets);
+
     inputAddress.value = window.utils.getAddressForm(mapPinMain, SIZES_PIN);
+
     for (var n = 0; n < window.dataProject.selectCapacity.options.length; n++) {
       if (window.dataProject.selectCapacity.options[n].value === '1') {
         window.dataProject.selectCapacity.options[n].selected = true;
@@ -113,7 +155,39 @@
         window.dataProject.selectCapacity.options[n].disabled = true;
       }
     }
+
     window.utils.getPrice();
   }
+
+  function getDeactivation() {
+
+    closeCardMessage();
+
+    var onlyMapPins = window.dataProject.mapPins.querySelectorAll('.map__pin');
+    for (var h = 0; h < onlyMapPins.length; h++) {
+      if (!onlyMapPins[h].classList.contains('map__pin--main')) {
+        window.dataProject.mapPins.removeChild(onlyMapPins[h]);
+      }
+    }
+
+    window.dataProject.mapPins.removeEventListener('click', openCardMessage);
+
+    window.dataProject.inputPrice.min = 0;
+    window.dataProject.inputPrice.placeholder = 5000;
+
+    window.dataProject.map.classList.add('map--faded');
+    window.dataProject.formAdForm.classList.add('ad-form--disabled');
+
+    window.utils.setDisabled(formSelects);
+    window.utils.setDisabled(formFieldsets);
+
+    mapPinMain.style.left = startX;
+    mapPinMain.style.top = startY;
+
+    inputAddress.value = window.utils.getAddressForm(mapPinMain, SIZES_PIN_START);
+
+  }
+
+  window.main = getDeactivation;
 
 })();
