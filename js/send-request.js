@@ -8,7 +8,7 @@
   };
   var TIMEOUT_IN_MS = 10000;
 
-  window.ajaxData = function (data, onSuccess, onError) {
+  window.sendRequest = function (data, onSuccess, onError) {
     var xhr = new XMLHttpRequest();
     xhr.responseType = 'json';
 

@@ -16,6 +16,7 @@
   };
 
   var main = document.querySelector('main');
+  var formMapFilters = document.querySelector('.map__filters');
   var resetButton = window.dataProject.formAdForm.querySelector('.ad-form__reset');
   var selectTimeIn = window.dataProject.formAdForm.querySelector('select[name="timein"]');
   var selectTimeOut = window.dataProject.formAdForm.querySelector('select[name="timeout"]');
@@ -70,7 +71,8 @@
 
   function getReset() {
     window.dataProject.formAdForm.reset();
-    window.main();
+    formMapFilters.reset();
+    window.main.getDeactivation();
   }
 
   function getSuccessMessage() {
@@ -128,7 +130,7 @@
 
   window.dataProject.formAdForm.addEventListener('submit', function (evt) {
     evt.preventDefault();
-    window.ajaxData(new FormData(window.dataProject.formAdForm), uploadSuccessHandler, uploadErrorHandler);
+    window.sendRequest(new FormData(window.dataProject.formAdForm), uploadSuccessHandler, uploadErrorHandler);
   });
 
   resetButton.addEventListener('click', function (evt) {

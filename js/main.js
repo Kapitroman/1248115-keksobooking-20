@@ -141,7 +141,7 @@
 
     window.dataProject.mapPins.addEventListener('click', openCardMessage);
 
-    window.ajaxData(null, successHandler, errorHandler);
+    window.sendRequest(null, successHandler, errorHandler);
 
     window.utils.removeDisabled(formSelects);
     window.utils.removeDisabled(formFieldsets);
@@ -159,35 +159,34 @@
     window.utils.getPrice();
   }
 
-  function getDeactivation() {
+  window.main = {
+    getDeactivation: function () {
 
-    closeCardMessage();
+      closeCardMessage();
 
-    var onlyMapPins = window.dataProject.mapPins.querySelectorAll('.map__pin');
-    for (var h = 0; h < onlyMapPins.length; h++) {
-      if (!onlyMapPins[h].classList.contains('map__pin--main')) {
-        window.dataProject.mapPins.removeChild(onlyMapPins[h]);
+      var onlyMapPins = window.dataProject.mapPins.querySelectorAll('.map__pin');
+      for (var h = 0; h < onlyMapPins.length; h++) {
+        if (!onlyMapPins[h].classList.contains('map__pin--main')) {
+          window.dataProject.mapPins.removeChild(onlyMapPins[h]);
+        }
       }
+
+      window.dataProject.mapPins.removeEventListener('click', openCardMessage);
+
+      window.dataProject.inputPrice.min = 0;
+      window.dataProject.inputPrice.placeholder = 5000;
+
+      window.dataProject.map.classList.add('map--faded');
+      window.dataProject.formAdForm.classList.add('ad-form--disabled');
+
+      window.utils.setDisabled(formSelects);
+      window.utils.setDisabled(formFieldsets);
+
+      mapPinMain.style.left = startX;
+      mapPinMain.style.top = startY;
+
+      inputAddress.value = window.utils.getAddressForm(mapPinMain, SIZES_PIN_START);
     }
-
-    window.dataProject.mapPins.removeEventListener('click', openCardMessage);
-
-    window.dataProject.inputPrice.min = 0;
-    window.dataProject.inputPrice.placeholder = 5000;
-
-    window.dataProject.map.classList.add('map--faded');
-    window.dataProject.formAdForm.classList.add('ad-form--disabled');
-
-    window.utils.setDisabled(formSelects);
-    window.utils.setDisabled(formFieldsets);
-
-    mapPinMain.style.left = startX;
-    mapPinMain.style.top = startY;
-
-    inputAddress.value = window.utils.getAddressForm(mapPinMain, SIZES_PIN_START);
-
-  }
-
-  window.main = getDeactivation;
+  };
 
 })();
