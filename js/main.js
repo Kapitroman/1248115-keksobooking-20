@@ -8,18 +8,24 @@
   var borderRight = window.dataProject.mapPins.offsetWidth - SIZES_PIN[0] / 2;
   var borderTop = 130 - SIZES_PIN[1];
   var borderBottom = 630 - SIZES_PIN[1];
+  var serverMessages = [];
 
   var mapPinMain = window.dataProject.map.querySelector('.map__pin--main');
-  var formSelects = document.querySelectorAll('select');
-  var formFieldsets = document.querySelectorAll('fieldset');
-  var inputAddress = window.dataProject.formAdForm.querySelector('input[name="address"]');
   var mapFiltersContainer = document.querySelector('.map__filters-container');
+  var selectsFilterForm = mapFiltersContainer.querySelectorAll('select');
+  var fieldsetsFilterForm = mapFiltersContainer.querySelectorAll('fieldset');
+  var selectAdForm = window.dataProject.formAdForm.querySelectorAll('select');
+  var fieldsetAdForm = window.dataProject.formAdForm.querySelectorAll('fieldset');
+  var inputAddress = window.dataProject.formAdForm.querySelector('input[name="address"]');
   var startX = mapPinMain.style.left;
   var startY = mapPinMain.style.top;
+  var selectHousingType = mapFiltersContainer.querySelector('select[name="housing-type"]');
 
 
-  window.utils.setDisabled(formSelects);
-  window.utils.setDisabled(formFieldsets);
+  window.utils.setDisabled(selectsFilterForm);
+  window.utils.setDisabled(fieldsetsFilterForm);
+  window.utils.setDisabled(selectAdForm);
+  window.utils.setDisabled(fieldsetAdForm);
 
   inputAddress.value = window.utils.getAddressForm(mapPinMain, SIZES_PIN_START);
 
@@ -127,7 +133,10 @@
   }
 
   function successHandler(data) {
-    window.renderListOfPins(data);
+    serverMessages = data;
+    window.renderListOfPins(serverMessages);
+    window.utils.removeDisabled(selectsFilterForm);
+    window.utils.removeDisabled(fieldsetsFilterForm);
   }
 
   function errorHandler(errorMessage) {
@@ -143,8 +152,8 @@
 
     window.sendRequest(null, successHandler, errorHandler);
 
-    window.utils.removeDisabled(formSelects);
-    window.utils.removeDisabled(formFieldsets);
+    window.utils.removeDisabled(selectAdForm);
+    window.utils.removeDisabled(fieldsetAdForm);
 
     inputAddress.value = window.utils.getAddressForm(mapPinMain, SIZES_PIN);
 
@@ -164,12 +173,7 @@
 
       closeCardMessage();
 
-      var onlyMapPins = window.dataProject.mapPins.querySelectorAll('.map__pin');
-      for (var h = 0; h < onlyMapPins.length; h++) {
-        if (!onlyMapPins[h].classList.contains('map__pin--main')) {
-          window.dataProject.mapPins.removeChild(onlyMapPins[h]);
-        }
-      }
+      window.utils.clearPins();
 
       window.dataProject.mapPins.removeEventListener('click', openCardMessage);
 
@@ -179,8 +183,10 @@
       window.dataProject.map.classList.add('map--faded');
       window.dataProject.formAdForm.classList.add('ad-form--disabled');
 
-      window.utils.setDisabled(formSelects);
-      window.utils.setDisabled(formFieldsets);
+      window.utils.setDisabled(selectsFilterForm);
+      window.utils.setDisabled(fieldsetsFilterForm);
+      window.utils.setDisabled(selectAdForm);
+      window.utils.setDisabled(fieldsetAdForm);
 
       mapPinMain.style.left = startX;
       mapPinMain.style.top = startY;
@@ -188,5 +194,23 @@
       inputAddress.value = window.utils.getAddressForm(mapPinMain, SIZES_PIN_START);
     }
   };
+
+  selectHousingType.addEventListener('change', function () {
+    closeCardMessage();
+    if (selectHousingType.value === 'any') {
+      window.renderListOfPins(serverMessages);
+    } else {
+      var hostingTypeMessages = [];
+      for (var i = 0; i < serverMessages.length; i++) {
+        if (serverMessages[i].offer.type === selectHousingType.value) {
+          hostingTypeMessages.push(serverMessages[i]);
+        }
+        if (hostingTypeMessages.length === 5) {
+          break;
+        }
+      }
+      window.renderListOfPins(hostingTypeMessages);
+    }
+  });
 
 })();
