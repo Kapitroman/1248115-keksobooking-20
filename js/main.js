@@ -200,10 +200,16 @@
     if (selectHousingType.value === 'any') {
       window.renderListOfPins(serverMessages);
     } else {
-      var hostingTypeMessage = serverMessages.filter(function (item) {
-        return item.offer.type === selectHousingType.value;
-      });
-      window.renderListOfPins(hostingTypeMessage);
+      var hostingTypeMessages = [];
+      for (var i = 0; i < serverMessages.length; i++) {
+        if (serverMessages[i].offer.type === selectHousingType.value) {
+          hostingTypeMessages.push(serverMessages[i]);
+        }
+        if (hostingTypeMessages.length === 5) {
+          break;
+        }
+      }
+      window.renderListOfPins(hostingTypeMessages);
     }
   });
 
