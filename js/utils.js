@@ -24,6 +24,14 @@
     },
     getTextContent: function (element, value) {
       element.textContent = value;
+    },
+    clearPins: function () {
+      var onlyMapPins = window.dataProject.mapPins.querySelectorAll('.map__pin');
+      for (var h = 0; h < onlyMapPins.length; h++) {
+        if (!onlyMapPins[h].classList.contains('map__pin--main')) {
+          window.dataProject.mapPins.removeChild(onlyMapPins[h]);
+        }
+      }
     }
   };
 

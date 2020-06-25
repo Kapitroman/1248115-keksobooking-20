@@ -3,6 +3,7 @@
 (function () {
 
   var SIZES_PIN_MESSAGE = [50, 70];
+  var MAX_RENDER_NUMBER = 5;
 
   var templatePin = document.querySelector('#pin')
     .content
@@ -20,8 +21,10 @@
   }
 
   window.renderListOfPins = function (data) {
+    window.utils.clearPins();
     var fragment = document.createDocumentFragment();
-    for (var r = 0; r < data.length; r++) {
+    var renderNumber = data.length > MAX_RENDER_NUMBER ? MAX_RENDER_NUMBER : data.length;
+    for (var r = 0; r < renderNumber; r++) {
       fragment.appendChild(renderPin(data[r]));
     }
     window.dataProject.mapPins.appendChild(fragment);
