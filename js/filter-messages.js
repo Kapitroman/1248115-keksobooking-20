@@ -7,26 +7,26 @@
   var selectHousingPrice = mapFiltersContainer.querySelector('select[name="housing-price"]');
   var selectHousingRooms = mapFiltersContainer.querySelector('select[name="housing-rooms"]');
   var selectHousingGuest = mapFiltersContainer.querySelector('select[name="housing-guests"]');
-  var listMapCheckbox =  mapFiltersContainer.querySelectorAll('.map__checkbox');
+  var listMapCheckbox = mapFiltersContainer.querySelectorAll('.map__checkbox');
 
   mapFiltersContainer.addEventListener('change', function () {
     window.main.closeCardMessage();
 
-    var messagesForFilter =  window.main.serverMessages;
+    var messagesForFilter = window.main.serverMessages;
 
     function havePrice(val) {
-	    if (val < 10000) {
-	      return 'low';
+      if (val < 10000) {
+        return 'low';
       } else if (val >= 50000) {
-	      return 'high';
-	    } else {
+        return 'high';
+      } else {
         return 'middle';
       }
     }
 
     function chooseSelect(element) {
       var iterateArr = [];
-  	  if (element.value !== 'any') {
+      if (element.value !== 'any') {
         for (var i = 0; i < messagesForFilter.length; i++) {
           if (element === selectHousingType) {
             if (messagesForFilter[i].offer.type === selectHousingType.value) {
@@ -79,7 +79,7 @@
     messagesForFilter = chooseSelect(selectHousingGuest);
 
     for (var v = 0; v < listMapCheckbox.length; v++) {
-       messagesForFilter = chooseCheckbox(listMapCheckbox[v]);
+      messagesForFilter = chooseCheckbox(listMapCheckbox[v]);
     }
 
     window.debounce(function () {
