@@ -8,7 +8,6 @@
   var borderRight = window.dataProject.mapPins.offsetWidth - SIZES_PIN[0] / 2;
   var borderTop = 130 - SIZES_PIN[1];
   var borderBottom = 630 - SIZES_PIN[1];
-  var serverMessages = [];
 
   var mapPinMain = window.dataProject.map.querySelector('.map__pin--main');
   var mapFiltersContainer = document.querySelector('.map__filters-container');
@@ -19,8 +18,6 @@
   var inputAddress = window.dataProject.formAdForm.querySelector('input[name="address"]');
   var startX = mapPinMain.style.left;
   var startY = mapPinMain.style.top;
-  var selectHousingType = mapFiltersContainer.querySelector('select[name="housing-type"]');
-
 
   window.utils.setDisabled(selectsFilterForm);
   window.utils.setDisabled(fieldsetsFilterForm);
@@ -96,20 +93,13 @@
   });
 
   function handlerClickClose() {
-    closeCardMessage();
+    window.main.closeCardMessage();
   }
 
   function handlerPressEsc(evt) {
     if (evt.key === 'Escape') {
       evt.preventDefault();
-      closeCardMessage();
-    }
-  }
-
-  function closeCardMessage() {
-    if (window.dataProject.map.querySelector('.popup')) {
-      window.dataProject.map.removeChild(window.dataProject.map.querySelector('.popup'));
-      document.removeEventListener('keydown', handlerPressEsc);
+      window.main.closeCardMessage();
     }
   }
 
@@ -122,7 +112,7 @@
       return;
     }
 
-    closeCardMessage();
+    window.main.closeCardMessage();
 
     var openCard = window.createCard(targetPin.allData);
     window.dataProject.map.insertBefore(openCard, mapFiltersContainer);
@@ -133,8 +123,8 @@
   }
 
   function successHandler(data) {
-    serverMessages = data;
-    window.renderListOfPins(serverMessages);
+    window.main.serverMessages = data;
+    window.renderListOfPins(window.main.serverMessages);
     window.utils.removeDisabled(selectsFilterForm);
     window.utils.removeDisabled(fieldsetsFilterForm);
   }
@@ -169,9 +159,18 @@
   }
 
   window.main = {
+    serverMessages: [],
+
+    closeCardMessage: function () {
+      if (window.dataProject.map.querySelector('.popup')) {
+        window.dataProject.map.removeChild(window.dataProject.map.querySelector('.popup'));
+        document.removeEventListener('keydown', handlerPressEsc);
+      }
+    },
+
     getDeactivation: function () {
 
-      closeCardMessage();
+      this.closeCardMessage();
 
       window.utils.clearPins();
 
@@ -194,23 +193,5 @@
       inputAddress.value = window.utils.getAddressForm(mapPinMain, SIZES_PIN_START);
     }
   };
-
-  selectHousingType.addEventListener('change', function () {
-    closeCardMessage();
-    if (selectHousingType.value === 'any') {
-      window.renderListOfPins(serverMessages);
-    } else {
-      var hostingTypeMessages = [];
-      for (var i = 0; i < serverMessages.length; i++) {
-        if (serverMessages[i].offer.type === selectHousingType.value) {
-          hostingTypeMessages.push(serverMessages[i]);
-        }
-        if (hostingTypeMessages.length === 5) {
-          break;
-        }
-      }
-      window.renderListOfPins(hostingTypeMessages);
-    }
-  });
 
 })();

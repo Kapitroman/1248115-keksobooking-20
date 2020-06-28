@@ -46,9 +46,12 @@
 
     var featuresList = cardElement.querySelectorAll('.popup__feature');
     for (var j = 0; j < featuresList.length; j++) {
-      if (message.offer.features[j]) {
-        window.utils.getTextContent(featuresList[j], message.offer.features[j]);
-      } else {
+      for (var z = 0; z < message.offer.features.length; z++) {
+        if (featuresList[j].classList.contains('popup__feature--' + message.offer.features[z])) {
+          window.utils.getTextContent(featuresList[j], message.offer.features[z]);
+        }
+      }
+      if (!featuresList[j].textContent) {
         featuresList[j].style = 'display: none;';
       }
     }
