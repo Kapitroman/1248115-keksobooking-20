@@ -14,54 +14,30 @@
 
     var messagesForFilter = window.main.serverMessages;
 
-    function havePrice(val) {
-      if (val < 10000) {
+    function transformForEqual(item, typeOffer) {
+      if (typeOffer === 'type') {
+        return item.offer[typeOffer];
+      }
+      if (typeOffer === 'rooms' || typeOffer === 'guests') {
+        return String(item.offer[typeOffer]);
+      }
+      if (item.offer[typeOffer] < 10000) {
         return 'low';
-      } else if (val >= 50000) {
+      } else if (item.offer[typeOffer] >= 50000) {
         return 'high';
       } else {
         return 'middle';
       }
     }
 
-    function chooseSelect(element) {
+    function chooseMessages(element, typeOffer) {
       var iterateArr = [];
-      if (element.value !== 'any') {
+      if (element.checked || (element.value !== 'any' && typeOffer !== 'features')) {
         for (var i = 0; i < messagesForFilter.length; i++) {
-          if (element === selectHousingType) {
-            if (messagesForFilter[i].offer.type === selectHousingType.value) {
-              iterateArr.push(messagesForFilter[i]);
-            }
+          if (typeOffer === 'features' && messagesForFilter[i].offer.features.includes(element.value)) {
+            iterateArr.push(messagesForFilter[i]);
           }
-          if (element === selectHousingPrice) {
-            if (havePrice(messagesForFilter[i].offer.price) === selectHousingPrice.value) {
-              iterateArr.push(messagesForFilter[i]);
-            }
-          }
-          if (element === selectHousingRooms) {
-            if (messagesForFilter[i].offer.rooms === Number(selectHousingRooms.value)) {
-              iterateArr.push(messagesForFilter[i]);
-            }
-          }
-          if (element === selectHousingGuest) {
-            if (messagesForFilter[i].offer.guests === Number(selectHousingGuest.value)) {
-              iterateArr.push(messagesForFilter[i]);
-            }
-          }
-          if (iterateArr.length === 5) {
-            break;
-          }
-        }
-        return iterateArr;
-      }
-      return messagesForFilter;
-    }
-
-    function chooseCheckbox(element) {
-      var iterateArr = [];
-      if (element.checked) {
-        for (var i = 0; i < messagesForFilter.length; i++) {
-          if (messagesForFilter[i].offer.features.includes(element.value)) {
+          if (typeOffer !== 'features' && transformForEqual(messagesForFilter[i], typeOffer) === element.value) {
             iterateArr.push(messagesForFilter[i]);
           }
           if (iterateArr.length === 5) {
@@ -73,13 +49,13 @@
       return messagesForFilter;
     }
 
-    messagesForFilter = chooseSelect(selectHousingType);
-    messagesForFilter = chooseSelect(selectHousingPrice);
-    messagesForFilter = chooseSelect(selectHousingRooms);
-    messagesForFilter = chooseSelect(selectHousingGuest);
+    messagesForFilter = chooseMessages(selectHousingType, 'type');
+    messagesForFilter = chooseMessages(selectHousingPrice, 'price');
+    messagesForFilter = chooseMessages(selectHousingRooms, 'rooms');
+    messagesForFilter = chooseMessages(selectHousingGuest, 'guests');
 
     for (var v = 0; v < listMapCheckbox.length; v++) {
-      messagesForFilter = chooseCheckbox(listMapCheckbox[v]);
+      messagesForFilter = chooseMessages(listMapCheckbox[v], 'features');
     }
 
     window.debounce(function () {
