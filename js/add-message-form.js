@@ -21,6 +21,9 @@
   var selectTimeIn = window.dataProject.formAdForm.querySelector('select[name="timein"]');
   var selectTimeOut = window.dataProject.formAdForm.querySelector('select[name="timeout"]');
 
+  var previewAvatar = document.querySelector('.ad-form-header__preview img');
+  var adFormFoto = document.querySelector('.ad-form__photo');
+
   function getMessagePrice() {
     if (window.dataProject.inputPrice.value < window.dataProject.inputPrice.min) {
       window.dataProject.inputPrice.setCustomValidity('для данного типа жилья \nминимальная цена должна быть выше');
@@ -72,6 +75,8 @@
   function getReset() {
     window.dataProject.formAdForm.reset();
     formMapFilters.reset();
+    previewAvatar.src = 'img/muffin-grey.svg';
+    adFormFoto.innerHTML = '';
     window.main.getDeactivation();
   }
 
