@@ -11,8 +11,12 @@
 
   function uploadFoto(evt, preview) {
     if (preview === undefined) {
-      preview = document.createElement('img');
-      adFormFoto.appendChild(preview);
+      if (adFormFoto.firstElementChild) {
+        preview = adFormFoto.firstElementChild;
+      } else {
+        preview = document.createElement('img');
+        adFormFoto.appendChild(preview);
+      }
     }
 
     var file = evt.target.files[0];
