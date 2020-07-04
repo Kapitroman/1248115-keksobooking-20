@@ -31,20 +31,20 @@
     }
 
     function chooseMessages(element, typeOffer) {
-      var iterateArr = [];
+      var filteredArray = [];
       if (element.checked || (element.value !== 'any' && typeOffer !== 'features')) {
         for (var i = 0; i < messagesForFilter.length; i++) {
           if (typeOffer === 'features' && messagesForFilter[i].offer.features.includes(element.value)) {
-            iterateArr.push(messagesForFilter[i]);
+            filteredArray.push(messagesForFilter[i]);
           }
           if (typeOffer !== 'features' && transformForEqual(messagesForFilter[i], typeOffer) === element.value) {
-            iterateArr.push(messagesForFilter[i]);
+            filteredArray.push(messagesForFilter[i]);
           }
-          if (iterateArr.length === 5) {
+          if (filteredArray.length === 5) {
             break;
           }
         }
-        return iterateArr;
+        return filteredArray;
       }
       return messagesForFilter;
     }

@@ -13,16 +13,16 @@
   var mapFiltersContainer = document.querySelector('.map__filters-container');
   var selectsFilterForm = mapFiltersContainer.querySelectorAll('select');
   var fieldsetsFilterForm = mapFiltersContainer.querySelectorAll('fieldset');
-  var selectAdForm = window.dataProject.formAdForm.querySelectorAll('select');
-  var fieldsetAdForm = window.dataProject.formAdForm.querySelectorAll('fieldset');
+  var selectsAdForm = window.dataProject.formAdForm.querySelectorAll('select');
+  var fieldsetsAdForm = window.dataProject.formAdForm.querySelectorAll('fieldset');
   var inputAddress = window.dataProject.formAdForm.querySelector('input[name="address"]');
   var startX = mapPinMain.style.left;
   var startY = mapPinMain.style.top;
 
   window.utils.setDisabled(selectsFilterForm);
   window.utils.setDisabled(fieldsetsFilterForm);
-  window.utils.setDisabled(selectAdForm);
-  window.utils.setDisabled(fieldsetAdForm);
+  window.utils.setDisabled(selectsAdForm);
+  window.utils.setDisabled(fieldsetsAdForm);
 
   inputAddress.value = window.utils.getAddressForm(mapPinMain, SIZES_PIN_START);
 
@@ -38,7 +38,7 @@
       y: evt.clientY
     };
 
-    var onMouseMove = function (moveEvt) {
+    function onMouseMove(moveEvt) {
       moveEvt.preventDefault();
       if (buttonMouse !== 0) {
         return;
@@ -73,14 +73,14 @@
       mapPinMain.style.top = newPointY + 'px';
 
       inputAddress.value = window.utils.getAddressForm(mapPinMain, SIZES_PIN);
-    };
+    }
 
-    var onMouseUp = function (upEvt) {
+    function onMouseUp(upEvt) {
       upEvt.preventDefault();
 
       document.removeEventListener('mousemove', onMouseMove);
       document.removeEventListener('mouseup', onMouseUp);
-    };
+    }
 
     document.addEventListener('mousemove', onMouseMove);
     document.addEventListener('mouseup', onMouseUp);
@@ -92,18 +92,18 @@
     }
   });
 
-  function handlerClickClose() {
+  function onCardClick() {
     window.main.closeCardMessage();
   }
 
-  function handlerPressEsc(evt) {
+  function onCardEscPress(evt) {
     if (evt.key === 'Escape') {
       evt.preventDefault();
       window.main.closeCardMessage();
     }
   }
 
-  function openCardMessage(evt) {
+  function onCardPinClick(evt) {
     var targetPin = evt.target.closest('.map__pin');
     if (!targetPin) {
       return;
@@ -114,22 +114,24 @@
 
     window.main.closeCardMessage();
 
-    var openCard = window.createCard(targetPin.allData);
-    window.dataProject.map.insertBefore(openCard, mapFiltersContainer);
+    targetPin.classList.add('map__pin--active');
 
-    var popupClose = openCard.querySelector('.popup__close');
-    popupClose.addEventListener('click', handlerClickClose);
-    document.addEventListener('keydown', handlerPressEsc);
+    var openedCard = window.createCard(targetPin.allData);
+    window.dataProject.map.insertBefore(openedCard, mapFiltersContainer);
+
+    var popupClose = openedCard.querySelector('.popup__close');
+    popupClose.addEventListener('click', onCardClick);
+    document.addEventListener('keydown', onCardEscPress);
   }
 
-  function successHandler(data) {
+  function onSuccess(data) {
     window.main.serverMessages = data;
     window.renderListOfPins(window.main.serverMessages);
     window.utils.removeDisabled(selectsFilterForm);
     window.utils.removeDisabled(fieldsetsFilterForm);
   }
 
-  function errorHandler(errorMessage) {
+  function onError(errorMessage) {
     window.addMessageForm();
     window.utils.getTextContent(document.querySelector('.error__message'), errorMessage);
   }
@@ -138,12 +140,12 @@
     window.dataProject.map.classList.remove('map--faded');
     window.dataProject.formAdForm.classList.remove('ad-form--disabled');
 
-    window.dataProject.mapPins.addEventListener('click', openCardMessage);
+    window.dataProject.mapPins.addEventListener('click', onCardPinClick);
 
-    window.sendRequest(null, successHandler, errorHandler);
+    window.sendRequest(null, onSuccess, onError);
 
-    window.utils.removeDisabled(selectAdForm);
-    window.utils.removeDisabled(fieldsetAdForm);
+    window.utils.removeDisabled(selectsAdForm);
+    window.utils.removeDisabled(fieldsetsAdForm);
 
     inputAddress.value = window.utils.getAddressForm(mapPinMain, SIZES_PIN);
 
@@ -164,7 +166,14 @@
     closeCardMessage: function () {
       if (window.dataProject.map.querySelector('.popup')) {
         window.dataProject.map.removeChild(window.dataProject.map.querySelector('.popup'));
-        document.removeEventListener('keydown', handlerPressEsc);
+        var mapPinsAll = document.querySelectorAll('.map__pin');
+        for (var i = 0; i < mapPinsAll.length; i++) {
+          if (mapPinsAll[i].classList.contains('map__pin--active')) {
+            mapPinsAll[i].classList.remove('map__pin--active');
+            break;
+          }
+        }
+        document.removeEventListener('keydown', onCardEscPress);
       }
     },
 
@@ -174,7 +183,7 @@
 
       window.utils.clearPins();
 
-      window.dataProject.mapPins.removeEventListener('click', openCardMessage);
+      window.dataProject.mapPins.removeEventListener('click', onCardPinClick);
 
       window.dataProject.inputPrice.min = 0;
       window.dataProject.inputPrice.placeholder = 5000;
@@ -184,8 +193,8 @@
 
       window.utils.setDisabled(selectsFilterForm);
       window.utils.setDisabled(fieldsetsFilterForm);
-      window.utils.setDisabled(selectAdForm);
-      window.utils.setDisabled(fieldsetAdForm);
+      window.utils.setDisabled(selectsAdForm);
+      window.utils.setDisabled(fieldsetsAdForm);
 
       mapPinMain.style.left = startX;
       mapPinMain.style.top = startY;

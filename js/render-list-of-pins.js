@@ -10,14 +10,14 @@
     .querySelector('.map__pin');
 
   function renderPin(message) {
-    var pinElement = templatePin.cloneNode(true);
-    pinElement.style = 'left: ' + (message.location.x - SIZES_PIN_MESSAGE[0] / 2) + 'px; top: ' + (message.location.y - SIZES_PIN_MESSAGE[1]) + 'px;';
-    var imgPinElement = pinElement.querySelector('img');
-    imgPinElement.src = message.author.avatar;
-    imgPinElement.alt = message.offer.title;
-    pinElement.allData = message;
+    var pinOffer = templatePin.cloneNode(true);
+    pinOffer.style = 'left: ' + (message.location.x - SIZES_PIN_MESSAGE[0] / 2) + 'px; top: ' + (message.location.y - SIZES_PIN_MESSAGE[1]) + 'px;';
+    var imgPinOffer = pinOffer.querySelector('img');
+    imgPinOffer.src = message.author.avatar;
+    imgPinOffer.alt = message.offer.title;
+    pinOffer.allData = message;
 
-    return pinElement;
+    return pinOffer;
   }
 
   window.renderListOfPins = function (data) {
@@ -25,7 +25,9 @@
     var fragment = document.createDocumentFragment();
     var renderNumber = data.length > MAX_RENDER_NUMBER ? MAX_RENDER_NUMBER : data.length;
     for (var r = 0; r < renderNumber; r++) {
-      fragment.appendChild(renderPin(data[r]));
+      if (data[r].offer) {
+        fragment.appendChild(renderPin(data[r]));
+      }
     }
     window.dataProject.mapPins.appendChild(fragment);
   };

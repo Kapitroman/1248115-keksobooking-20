@@ -86,8 +86,8 @@
       .querySelector('.success');
     var successMessage = templateSuccess.cloneNode(true);
     main.appendChild(successMessage);
-    successMessage.addEventListener('click', handlerClick);
-    document.addEventListener('keydown', handlerPressEsc);
+    successMessage.addEventListener('click', onMessageClick);
+    document.addEventListener('keydown', onMessageEscPress);
   }
 
   function getErrorMessage() {
@@ -96,13 +96,13 @@
       .querySelector('.error');
     var errorMessage = templateError.cloneNode(true);
     main.appendChild(errorMessage);
-    errorMessage.addEventListener('click', handlerClick);
-    document.addEventListener('keydown', handlerPressEsc);
+    errorMessage.addEventListener('click', onMessageClick);
+    document.addEventListener('keydown', onMessageEscPress);
   }
 
   window.addMessageForm = getErrorMessage;
 
-  function handlerPressEsc(evt) {
+  function onMessageEscPress(evt) {
     if (evt.key === 'Escape') {
       evt.preventDefault();
       if (main.querySelector('.success')) {
@@ -114,28 +114,28 @@
     }
   }
 
-  function handlerClick(evt) {
+  function onMessageClick(evt) {
     closeMessage(evt.currentTarget);
   }
 
   function closeMessage(obj) {
     main.removeChild(obj);
-    document.removeEventListener('keydown', handlerPressEsc);
+    document.removeEventListener('keydown', onMessageEscPress);
   }
 
-  function uploadSuccessHandler() {
+  function onUploadSuccess() {
     getReset();
     getSuccessMessage();
     document.querySelector('.map__pin--main').focus();
   }
 
-  function uploadErrorHandler() {
+  function onUploadError() {
     getErrorMessage();
   }
 
   window.dataProject.formAdForm.addEventListener('submit', function (evt) {
     evt.preventDefault();
-    window.sendRequest(new FormData(window.dataProject.formAdForm), uploadSuccessHandler, uploadErrorHandler);
+    window.sendRequest(new FormData(window.dataProject.formAdForm), onUploadSuccess, onUploadError);
   });
 
   resetButton.addEventListener('click', function (evt) {

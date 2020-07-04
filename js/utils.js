@@ -23,7 +23,11 @@
       }
     },
     getTextContent: function (element, value) {
-      element.textContent = value;
+      if (value) {
+        element.textContent = value;
+      } else {
+        element.style = 'display: none;';
+      }
     },
     clearPins: function () {
       var onlyMapPins = window.dataProject.mapPins.querySelectorAll('.map__pin');
