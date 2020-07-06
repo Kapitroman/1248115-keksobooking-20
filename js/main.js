@@ -148,15 +148,7 @@
     window.utils.removeDisabled(fieldsetsAdForm);
 
     inputAddress.value = window.utils.getAddressForm(mapPinMain, SIZES_PIN);
-    /*
-    for (var n = 0; n < window.dataProject.selectCapacity.options.length; n++) {
-      if (window.dataProject.selectCapacity.options[n].value === '1') {
-        window.dataProject.selectCapacity.options[n].selected = true;
-      } else {
-        window.dataProject.selectCapacity.options[n].disabled = true;
-      }
-    }
-    */
+
     Array.from(window.dataProject.selectCapacity.options).forEach(function (item) {
       if (item.value === '1') {
         item.selected = true;
