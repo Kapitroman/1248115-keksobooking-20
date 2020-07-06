@@ -2,13 +2,13 @@
 
 (function () {
 
-  var ROOMS_DISABLED_GUEST = {
+  var roomsDisabledGuest = {
     '1': ['1'],
     '2': ['1', '2'],
     '3': ['1', '2', '3'],
     '100': ['0']
   };
-  var MESSAGE_CAPACITY = {
+  var messageCapacity = {
     '1': 'Вы можете выбрать для 1 гостя',
     '2': 'Вы можете выбрать для 1 гостя или для 2 гостей',
     '3': 'Вы можете выбрать для 1 гостя, для 2 или 3 гостей',
@@ -22,7 +22,16 @@
   var selectTimeOut = window.dataProject.formAdForm.querySelector('select[name="timeout"]');
 
   var previewAvatar = document.querySelector('.ad-form-header__preview img');
-  var adFormFoto = document.querySelector('.ad-form__photo');
+  var adFormPhoto = document.querySelector('.ad-form__photo');
+
+  var templateSuccess = document.querySelector('#success')
+    .content
+    .querySelector('.success');
+  var templateError = document.querySelector('#error')
+    .content
+    .querySelector('.error');
+
+  var uploadMessage;
 
   function getMessagePrice() {
     if (window.dataProject.inputPrice.value < window.dataProject.inputPrice.min) {
@@ -42,21 +51,18 @@
   });
 
   function getMessageCapacity() {
-    if (ROOMS_DISABLED_GUEST[window.dataProject.selectRooms.value].includes(window.dataProject.selectCapacity.value)) {
+    if (roomsDisabledGuest[window.dataProject.selectRooms.value].includes(window.dataProject.selectCapacity.value)) {
       window.dataProject.selectCapacity.setCustomValidity('');
     } else {
-      window.dataProject.selectCapacity.setCustomValidity(MESSAGE_CAPACITY[window.dataProject.selectRooms.value]);
+      window.dataProject.selectCapacity.setCustomValidity(messageCapacity[window.dataProject.selectRooms.value]);
     }
   }
 
   window.dataProject.selectRooms.addEventListener('change', function () {
-    for (var p = 0; p < window.dataProject.selectCapacity.options.length; p++) {
-      if (ROOMS_DISABLED_GUEST[window.dataProject.selectRooms.value].includes(window.dataProject.selectCapacity.options[p].value)) {
-        window.dataProject.selectCapacity[p].disabled = false;
-      } else {
-        window.dataProject.selectCapacity[p].disabled = true;
-      }
-    }
+    Array.from(window.dataProject.selectCapacity.options).forEach(function (item) {
+      item.disabled =
+      !roomsDisabledGuest[window.dataProject.selectRooms.value].includes(item.value);
+    });
     getMessageCapacity();
   });
 
@@ -76,27 +82,21 @@
     window.dataProject.formAdForm.reset();
     formMapFilters.reset();
     previewAvatar.src = 'img/muffin-grey.svg';
-    adFormFoto.innerHTML = '';
+    adFormPhoto.innerHTML = '';
     window.main.getDeactivation();
   }
 
   function getSuccessMessage() {
-    var templateSuccess = document.querySelector('#success')
-      .content
-      .querySelector('.success');
-    var successMessage = templateSuccess.cloneNode(true);
-    main.appendChild(successMessage);
-    successMessage.addEventListener('click', onMessageClick);
+    uploadMessage = templateSuccess.cloneNode(true);
+    main.appendChild(uploadMessage);
+    uploadMessage.addEventListener('click', onMessageClick);
     document.addEventListener('keydown', onMessageEscPress);
   }
 
   function getErrorMessage() {
-    var templateError = document.querySelector('#error')
-      .content
-      .querySelector('.error');
-    var errorMessage = templateError.cloneNode(true);
-    main.appendChild(errorMessage);
-    errorMessage.addEventListener('click', onMessageClick);
+    uploadMessage = templateError.cloneNode(true);
+    main.appendChild(uploadMessage);
+    uploadMessage.addEventListener('click', onMessageClick);
     document.addEventListener('keydown', onMessageEscPress);
   }
 
@@ -105,11 +105,8 @@
   function onMessageEscPress(evt) {
     if (evt.key === 'Escape') {
       evt.preventDefault();
-      if (main.querySelector('.success')) {
-        closeMessage(main.querySelector('.success'));
-      }
-      if (main.querySelector('.error')) {
-        closeMessage(main.querySelector('.error'));
+      if (uploadMessage) {
+        closeMessage(uploadMessage);
       }
     }
   }
@@ -121,6 +118,7 @@
   function closeMessage(obj) {
     main.removeChild(obj);
     document.removeEventListener('keydown', onMessageEscPress);
+    uploadMessage = undefined;
   }
 
   function onUploadSuccess() {

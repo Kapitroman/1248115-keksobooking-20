@@ -2,7 +2,7 @@
 
 (function () {
 
-  var TYPE_FLAT = {
+  var typeFlat = {
     'flat': ['Квартира', 1000],
     'bungalo': ['Бунгало', 0],
     'palace': ['Дворец', 10000],
@@ -18,7 +18,7 @@
   var selectCapacity = formAdForm.querySelector('select[name="capacity"]');
 
   window.dataProject = {
-    TYPE_FLAT: TYPE_FLAT,
+    typeFlat: typeFlat,
     map: map,
     mapPins: mapPins,
     formAdForm: formAdForm,

@@ -54,9 +54,9 @@
     messagesForFilter = chooseMessages(selectHousingRooms, 'rooms');
     messagesForFilter = chooseMessages(selectHousingGuest, 'guests');
 
-    for (var v = 0; v < listMapCheckbox.length; v++) {
-      messagesForFilter = chooseMessages(listMapCheckbox[v], 'features');
-    }
+    Array.from(listMapCheckbox).forEach(function (item) {
+      messagesForFilter = chooseMessages(item, 'features');
+    });
 
     window.debounce(function () {
       window.renderListOfPins(messagesForFilter);
