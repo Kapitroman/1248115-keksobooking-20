@@ -6,18 +6,18 @@
     .content
     .querySelector('.map__card');
 
-  function getRoomsString(num) {
-    if (num === 0 || num === 35) {
+  function getRoomsString(number) {
+    if (number === 0 || number === 35) {
       return 'комнат';
     }
-    if (num === 1) {
+    if (number === 1) {
       return 'комната';
     }
     return 'комнаты';
   }
 
-  function getGuestsString(num) {
-    if (num === 1) {
+  function getGuestsString(number) {
+    if (number === 1) {
       return 'гостя';
     }
     return 'гостей';

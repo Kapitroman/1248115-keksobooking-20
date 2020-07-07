@@ -12,10 +12,10 @@
   mapFiltersContainer.addEventListener('change', function () {
     window.main.closeCardMessage();
 
-    function havePrice(val) {
-      if (val < 10000) {
+    function havePrice(value) {
+      if (value < 10000) {
         return 'low';
-      } else if (val >= 50000) {
+      } else if (value >= 50000) {
         return 'high';
       } else {
         return 'middle';
