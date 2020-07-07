@@ -12,51 +12,52 @@
   mapFiltersContainer.addEventListener('change', function () {
     window.main.closeCardMessage();
 
-    var messagesForFilter = window.main.serverMessages;
-
-    function transformForEqual(item, typeOffer) {
-      if (typeOffer === 'type') {
-        return item.offer[typeOffer];
-      }
-      if (typeOffer === 'rooms' || typeOffer === 'guests') {
-        return String(item.offer[typeOffer]);
-      }
-      if (item.offer[typeOffer] < 10000) {
+    function havePrice(val) {
+      if (val < 10000) {
         return 'low';
-      } else if (item.offer[typeOffer] >= 50000) {
+      } else if (val >= 50000) {
         return 'high';
       } else {
         return 'middle';
       }
     }
 
-    function chooseMessages(element, typeOffer) {
+    function chooseMessages(data) {
       var filteredArray = [];
-      if (element.checked || (element.value !== 'any' && typeOffer !== 'features')) {
-        for (var i = 0; i < messagesForFilter.length; i++) {
-          if (typeOffer === 'features' && messagesForFilter[i].offer.features.includes(element.value)) {
-            filteredArray.push(messagesForFilter[i]);
-          }
-          if (typeOffer !== 'features' && transformForEqual(messagesForFilter[i], typeOffer) === element.value) {
-            filteredArray.push(messagesForFilter[i]);
-          }
-          if (filteredArray.length === 5) {
+      for (var i = 0; i < data.length; i++) {
+        if (data[i].offer.type !== selectHousingType.value && selectHousingType.value !== 'any') {
+          continue;
+        }
+        if (havePrice(data[i].offer.price) !== selectHousingPrice.value && selectHousingPrice.value !== 'any') {
+          continue;
+        }
+        if (String(data[i].offer.rooms) !== selectHousingRooms.value && selectHousingRooms.value !== 'any') {
+          continue;
+        }
+        if (String(data[i].offer.guests) !== selectHousingGuest.value && selectHousingGuest.value !== 'any') {
+          continue;
+        }
+        var filterCheckBox = true;
+        for (var j = 0; j < listMapCheckbox.length; j++) {
+          if (listMapCheckbox[j].checked && !data[i].offer.features.includes(listMapCheckbox[j].value)) {
+            filterCheckBox = false;
             break;
           }
         }
-        return filteredArray;
+        if (!filterCheckBox) {
+          continue;
+        }
+
+        filteredArray.push(data[i]);
+
+        if (filteredArray.length === 5) {
+          break;
+        }
       }
-      return messagesForFilter;
+      return filteredArray;
     }
 
-    messagesForFilter = chooseMessages(selectHousingType, 'type');
-    messagesForFilter = chooseMessages(selectHousingPrice, 'price');
-    messagesForFilter = chooseMessages(selectHousingRooms, 'rooms');
-    messagesForFilter = chooseMessages(selectHousingGuest, 'guests');
-
-    Array.from(listMapCheckbox).forEach(function (item) {
-      messagesForFilter = chooseMessages(item, 'features');
-    });
+    var messagesForFilter = chooseMessages(window.main.serverMessages);
 
     window.debounce(function () {
       window.renderListOfPins(messagesForFilter);

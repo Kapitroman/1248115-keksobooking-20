@@ -15,6 +15,8 @@
         preview = adFormPhoto.firstElementChild;
       } else {
         preview = document.createElement('img');
+        preview.style.maxWidth = '290px';
+        preview.style.maxHeight = '220px';
         adFormPhoto.appendChild(preview);
       }
     }

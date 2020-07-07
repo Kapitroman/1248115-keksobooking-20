@@ -90,6 +90,8 @@
     uploadMessage = templateSuccess.cloneNode(true);
     main.appendChild(uploadMessage);
     uploadMessage.addEventListener('click', onMessageClick);
+    uploadMessage.setAttribute('tabindex', 0);
+    uploadMessage.focus();
     document.addEventListener('keydown', onMessageEscPress);
   }
 
@@ -115,8 +117,8 @@
     closeMessage(evt.currentTarget);
   }
 
-  function closeMessage(obj) {
-    main.removeChild(obj);
+  function closeMessage(popUpMessage) {
+    main.removeChild(popUpMessage);
     document.removeEventListener('keydown', onMessageEscPress);
     uploadMessage = undefined;
   }
@@ -124,7 +126,6 @@
   function onUploadSuccess() {
     getReset();
     getSuccessMessage();
-    document.querySelector('.map__pin--main').focus();
   }
 
   function onUploadError() {
