@@ -2,7 +2,8 @@
 
 (function () {
 
-  var URL = 'https://javascript.pages.academy/keksobooking/';
+  //var URL = 'https://javascript.pages.academy/keksobooking/';// url на сервере изменили
+  var URL = 'https://22.javascript.pages.academy/keksobooking/';
   var StatusCode = {
     OK: 200
   };

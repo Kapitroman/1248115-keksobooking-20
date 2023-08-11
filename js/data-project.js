@@ -4,9 +4,10 @@
 
   var typeFlat = {
     'flat': ['Квартира', 1000],
-    'bungalo': ['Бунгало', 0],
+    'bungalow': ['Бунгало', 0],
     'palace': ['Дворец', 10000],
-    'house': ['Дом', 5000]
+    'house': ['Дом', 5000],
+	'hotel': ['Отель', 3000]
   };
 
   var map = document.querySelector('.map');
